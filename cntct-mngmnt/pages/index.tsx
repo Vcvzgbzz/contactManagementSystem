@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 // import styles from './page.module.css';
-import callApi from "./api/callApi";
+import callApi from "../core/callApi";
 // import { connectToDatabase } from '@/app/mongodb';
 
 type ConnectionStatus = {
@@ -41,21 +41,54 @@ export const getServerSideProps: GetServerSideProps<
 export default function Home({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [contacts, setContacts] = useState<Array<any>>([]);
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
+  type ContactData = {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    address: {
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+    email: string;
+    dateOfBirth: string;
+    notes: string;
+    tags: string[];
+    isFavorite: boolean;
+  };
+  const emptyFormData: ContactData = {
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    address: {
+      street: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "",
+    },
+    email: "",
+    dateOfBirth: "",
+    notes: "",
+    tags: [],
+    isFavorite: false,
+  };
+  const [contacts, setContacts] = useState<Array<ContactData>>([]);
+  const [formData, setFormData] = useState<ContactData>(emptyFormData);
   useEffect(() => {
-    // Fetch contacts on component mount
-
     fetchContacts();
   }, []);
 
   const fetchContacts = async () => {
-    callApi<undefined, Array<any>>({
+    callApi<undefined, {contacts:Array<ContactData>}>({
       method: "get",
-      url: "/api/contact",
+      url: "/api/contactApi",
       steps: {
         onSuccess: (data) => {
-          setContacts(data);
+          console.log(data.contacts)
+          setContacts(data.contacts);
         },
       },
     });
@@ -64,11 +97,10 @@ export default function Home({
   const handleFormSubmit = async (event: any) => {
     event.preventDefault();
     callApi({
-      url: "/api/contact",
+      method: "post",
+      url: "/api/contactApi",
       steps: {
-        onRequest: () => {
-          console.log("request");
-        },
+        onRequest: () => {},
         onSuccess: (data) => {
           console.log("data", data);
         },
@@ -76,14 +108,14 @@ export default function Home({
           console.log("error", error);
         },
       },
-      body: JSON.stringify(formData),
+      body: formData,
     });
 
     // Refetch contacts after adding a new one
     fetchContacts();
 
     // Clear the form
-    setFormData({ name: "", email: "", phone: "" });
+    setFormData(emptyFormData);
   };
   return (
     <main className={""}>
@@ -96,11 +128,122 @@ export default function Home({
         }}
       >
         <label>
-          Name:
+          First Name:
+          <input
+            required
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={(e) =>
+              setFormData({ ...formData, [e.target.name]: e.target.value })
+            }
+          />
+        </label>
+        <br />
+
+        <label>
+          Last Name:
+          <input
+            required
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={(e) =>
+              setFormData({ ...formData, [e.target.name]: e.target.value })
+            }
+          />
+        </label>
+        <br />
+
+        <label>
+          Phone Number:
           <input
             type="text"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={(e) =>
+              setFormData({ ...formData, [e.target.name]: e.target.value })
+            }
+          />
+        </label>
+        <br />
+
+        <label>
+          Street Address:
+          <input
+            type="text"
+            name="street"
+            value={formData.address.street}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                address: { ...formData.address, street: e.target.value },
+              })
+            }
+          />
+        </label>
+        <br />
+
+        <label>
+          City:
+          <input
+            type="text"
+            name="city"
+            value={formData.address.city}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                address: { ...formData.address, city: e.target.value },
+              })
+            }
+          />
+        </label>
+        <br />
+
+        <label>
+          State:
+          <input
+            type="text"
+            name="state"
+            value={formData.address.state}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                address: { ...formData.address, state: e.target.value },
+              })
+            }
+          />
+        </label>
+        <br />
+
+        <label>
+          Postal Code:
+          <input
+            type="text"
+            name="postalCode"
+            value={formData.address.postalCode}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                address: { ...formData.address, postalCode: e.target.value },
+              })
+            }
+          />
+        </label>
+        <br />
+
+        <label>
+          Country:
+          <input
+            type="text"
+            name="country"
+            value={formData.address.country}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                address: { ...formData.address, country: e.target.value },
+              })
+            }
           />
         </label>
         <br />
@@ -109,36 +252,77 @@ export default function Home({
           Email:
           <input
             type="email"
+            name="email"
             value={formData.email}
             onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
+              setFormData({ ...formData, [e.target.name]: e.target.value })
             }
           />
         </label>
         <br />
 
         <label>
-          Phone:
+          Date of Birth:
           <input
-            type="text"
-            value={formData.phone}
+            type="date"
+            name="dateOfBirth"
+            value={formData.dateOfBirth}
             onChange={(e) =>
-              setFormData({ ...formData, phone: e.target.value })
+              setFormData({ ...formData, [e.target.name]: e.target.value })
             }
           />
         </label>
         <br />
 
+        <label>
+          Notes:
+          <textarea
+            name="notes"
+            value={formData.notes}
+            onChange={(e) =>
+              setFormData({ ...formData, [e.target.name]: e.target.value })
+            }
+          />
+        </label>
+        <br />
+
+        <label>
+          Tags (comma-separated):
+          <input
+            type="text"
+            name="tags"
+            value={formData.tags.join(",")}
+            onChange={(e) =>
+              setFormData({ ...formData, tags: e.target.value.split(",") })
+            }
+          />
+        </label>
+        <br />
+
+        <label>
+          Is Favorite:
+          <input
+            type="checkbox"
+            name="isFavorite"
+            checked={formData.isFavorite}
+            onChange={(e) =>
+              setFormData({ ...formData, [e.target.name]: e.target.checked })
+            }
+          />
+        </label>
+
+        <br />
+
         <button type="submit">Add Contact</button>
       </form>
+      {contacts && contacts.map((contact,index) => (
+  <li key={index}>
+    <div>
+      {contact.firstName} - {contact.email} - {contact.phoneNumber}
+    </div>
+  </li>
+))}
 
-      {/* <ul>
-        {contacts.map((contact) => (
-          <li key={contact._id}>
-            {contact.name} - {contact.email} - {contact.phone}
-          </li>
-        ))}
-      </ul> */}
     </main>
   );
 }
