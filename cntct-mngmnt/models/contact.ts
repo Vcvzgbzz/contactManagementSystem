@@ -1,21 +1,21 @@
 import mongoose, { Schema } from "mongoose";
 
 export type Contact = {
-  firstName: String;
-  lastName: String;
-  phoneNumber: String;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
   address: {
-    street: String;
-    city: String;
-    state: String;
-    postalCode: String;
-    country: String;
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
   };
-  email: String;
-  dateOfBirth: Date;
-  notes: String;
-  tags: [String];
-  isFavorite: Boolean;
+  email: string;
+  dateOfBirth: string;
+  notes: string;
+  tags: Array<string>;
+  isFavorite: boolean;
 };
 
 const contactSchema = new Schema(

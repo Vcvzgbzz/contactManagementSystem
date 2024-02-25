@@ -2,11 +2,15 @@ import Head from "next/head";
 import clientPromise from "../lib/mongodb";
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import { useState, useEffect } from "react";
-// import htmx from 'htmx.org';
+import { Contact as ContactData } from "../models/contact";
+import htmx from "htmx.org";
 import { useRouter } from "next/router";
+import Script from "next/script";
 
 // import styles from './page.module.css';
 import callApi from "../core/callApi";
+import { VStack } from "../core/VStack";
+import ContactSearch from "../components/searchContact";
 // import { connectToDatabase } from '@/app/mongodb';
 
 type ConnectionStatus = {
@@ -41,23 +45,6 @@ export const getServerSideProps: GetServerSideProps<
 export default function Home({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  type ContactData = {
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    address: {
-      street: string;
-      city: string;
-      state: string;
-      postalCode: string;
-      country: string;
-    };
-    email: string;
-    dateOfBirth: string;
-    notes: string;
-    tags: string[];
-    isFavorite: boolean;
-  };
   const emptyFormData: ContactData = {
     firstName: "",
     lastName: "",
@@ -82,12 +69,11 @@ export default function Home({
   }, []);
 
   const fetchContacts = async () => {
-    callApi<undefined, {contacts:Array<ContactData>}>({
+    callApi<undefined, { contacts: Array<ContactData> }>({
       method: "get",
-      url: "/api/contactApi",
+      url: "/api/contact/contactCrud",
       steps: {
         onSuccess: (data) => {
-          console.log(data.contacts)
           setContacts(data.contacts);
         },
       },
@@ -98,7 +84,7 @@ export default function Home({
     event.preventDefault();
     callApi({
       method: "post",
-      url: "/api/contactApi",
+      url: "/api/contact/contactCrud",
       steps: {
         onRequest: () => {},
         onSuccess: (data) => {
@@ -119,210 +105,226 @@ export default function Home({
   };
   return (
     <main className={""}>
-      <h1>Contact Management System</h1>
+      <Script src="https://cdn.jsdelivr.net/npm/htmx.org/dist/htmx.min.js" />
+      <VStack spacing={2}>
+        <h1>Contact Management System</h1>
 
-      <form
-        onSubmit={(event) => {
-          console.log(event);
-          handleFormSubmit(event);
-        }}
-      >
-        <label>
-          First Name:
-          <input
-            required
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={(e) =>
-              setFormData({ ...formData, [e.target.name]: e.target.value })
-            }
-          />
-        </label>
-        <br />
+        <form
+          // onSubmit={(event) => {
+          //   handleFormSubmit(event);
+          // }}
+          hx-post="/api/contactApi"
+          hx-trigger="submit"
+          hx-target="#contactList"
+          hx-swap="outerHTML"
+          hx-boost
+        >
+          <VStack spacing={0}>
+            <label>
+              First Name:
+              <input
+                required
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={(e) =>
+                  setFormData({ ...formData, [e.target.name]: e.target.value })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          Last Name:
-          <input
-            required
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={(e) =>
-              setFormData({ ...formData, [e.target.name]: e.target.value })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              Last Name:
+              <input
+                required
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={(e) =>
+                  setFormData({ ...formData, [e.target.name]: e.target.value })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          Phone Number:
-          <input
-            type="text"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={(e) =>
-              setFormData({ ...formData, [e.target.name]: e.target.value })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              Phone Number:
+              <input
+                type="text"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={(e) =>
+                  setFormData({ ...formData, [e.target.name]: e.target.value })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          Street Address:
-          <input
-            type="text"
-            name="street"
-            value={formData.address.street}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                address: { ...formData.address, street: e.target.value },
-              })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              Street Address:
+              <input
+                type="text"
+                name="street"
+                value={formData.address.street}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    address: { ...formData.address, street: e.target.value },
+                  })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          City:
-          <input
-            type="text"
-            name="city"
-            value={formData.address.city}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                address: { ...formData.address, city: e.target.value },
-              })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              City:
+              <input
+                type="text"
+                name="city"
+                value={formData.address.city}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    address: { ...formData.address, city: e.target.value },
+                  })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          State:
-          <input
-            type="text"
-            name="state"
-            value={formData.address.state}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                address: { ...formData.address, state: e.target.value },
-              })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              State:
+              <input
+                type="text"
+                name="state"
+                value={formData.address.state}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    address: { ...formData.address, state: e.target.value },
+                  })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          Postal Code:
-          <input
-            type="text"
-            name="postalCode"
-            value={formData.address.postalCode}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                address: { ...formData.address, postalCode: e.target.value },
-              })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              Postal Code:
+              <input
+                type="text"
+                name="postalCode"
+                value={formData.address.postalCode}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    address: {
+                      ...formData.address,
+                      postalCode: e.target.value,
+                    },
+                  })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          Country:
-          <input
-            type="text"
-            name="country"
-            value={formData.address.country}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                address: { ...formData.address, country: e.target.value },
-              })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              Country:
+              <input
+                type="text"
+                name="country"
+                value={formData.address.country}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    address: { ...formData.address, country: e.target.value },
+                  })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          Email:
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, [e.target.name]: e.target.value })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              Email:
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, [e.target.name]: e.target.value })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          Date of Birth:
-          <input
-            type="date"
-            name="dateOfBirth"
-            value={formData.dateOfBirth}
-            onChange={(e) =>
-              setFormData({ ...formData, [e.target.name]: e.target.value })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              Date of Birth:
+              <input
+                type="date"
+                name="dateOfBirth"
+                value={formData.dateOfBirth}
+                onChange={(e) =>
+                  setFormData({ ...formData, [e.target.name]: e.target.value })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          Notes:
-          <textarea
-            name="notes"
-            value={formData.notes}
-            onChange={(e) =>
-              setFormData({ ...formData, [e.target.name]: e.target.value })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              Notes:
+              <textarea
+                name="notes"
+                value={formData.notes}
+                onChange={(e) =>
+                  setFormData({ ...formData, [e.target.name]: e.target.value })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          Tags (comma-separated):
-          <input
-            type="text"
-            name="tags"
-            value={formData.tags.join(",")}
-            onChange={(e) =>
-              setFormData({ ...formData, tags: e.target.value.split(",") })
-            }
-          />
-        </label>
-        <br />
+            <label>
+              Tags (comma-separated):
+              <input
+                type="text"
+                name="tags"
+                value={formData.tags.join(",")}
+                onChange={(e) =>
+                  setFormData({ ...formData, tags: e.target.value.split(",") })
+                }
+              />
+            </label>
+            <br />
 
-        <label>
-          Is Favorite:
-          <input
-            type="checkbox"
-            name="isFavorite"
-            checked={formData.isFavorite}
-            onChange={(e) =>
-              setFormData({ ...formData, [e.target.name]: e.target.checked })
-            }
-          />
-        </label>
+            <label>
+              Is Favorite:
+              <input
+                type="checkbox"
+                name="isFavorite"
+                checked={formData.isFavorite}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    [e.target.name]: e.target.checked,
+                  })
+                }
+              />
+            </label>
 
-        <br />
+            <br />
 
-        <button type="submit">Add Contact</button>
-      </form>
-      {contacts && contacts.map((contact,index) => (
-  <li key={index}>
-    <div>
-      {contact.firstName} - {contact.email} - {contact.phoneNumber}
-    </div>
-  </li>
-))}
-
+            <button type="submit">Add Contact</button>
+          </VStack>
+        </form>
+        <ContactSearch></ContactSearch>
+        {/* {contacts &&
+          contacts.map((contact, index) => (
+            <li key={index}>
+              <div>
+                {contact.firstName} - {contact.email} - {contact.phoneNumber}
+              </div>
+            </li>
+          ))} */}
+      </VStack>
     </main>
   );
 }
