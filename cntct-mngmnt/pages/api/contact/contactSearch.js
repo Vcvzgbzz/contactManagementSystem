@@ -5,23 +5,41 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     await connectMongoDB();
     const { body } = req;
-    const { searchTerm } = body;
+    const { search } = body;
 
-    if (!searchTerm) {
-      return res.status(400).json({ error: "Search term is required" });
+    if (!search) {
+      return res
+        .status(200)
+        .send(`<tr><td colSpan="3">No results found</td></tr>`);
     }
 
     const contacts = await Contact.find({
       $or: [
-        { firstName: { $regex: searchTerm, $options: "i" } },
-        { lastName: { $regex: searchTerm, $options: "i" } },
-        { email: { $regex: searchTerm, $options: "i" } },
-        { phone: { $regex: searchTerm, $options: "i" } },
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { phone: { $regex: search, $options: "i" } },
       ],
     });
 
-    return res.status(200).json({ contacts });
+    let html = "";
+    contacts.forEach((contact) => {
+      html += `<tr>
+        <td>${contact.firstName}</td>
+        <td>${contact.lastName}</td>
+        <td>${contact.email}</td>
+        <td>${contact.phoneNumber}</td>
+        <td>${contact.address.city}</td>
+        <td>${contact.address.state}</td>
+      </tr>`;
+    });
+
+    if (contacts.length === 0) {
+      html = `<tr><td colSpan="3">No results found</td></tr>`;
+    }
+
+    return res.status(200).send(html);
   } else {
-    return res.status(405).end(); // Method Not Allowed
+    return res.status(405).end();
   }
 }

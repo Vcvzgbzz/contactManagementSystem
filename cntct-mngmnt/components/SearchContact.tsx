@@ -2,8 +2,14 @@ import React from "react";
 import htmx from "htmx.org";
 
 const ContactSearch = () => {
+  const thStyle: React.CSSProperties = {
+    borderBottom: "2px solid #dee2e6",
+    padding: "1rem",
+    textAlign: "center",
+  };
+
   return (
-    <div>
+    <div style={{ marginBottom: "2rem", display: "inline-block", alignSelf:'center' }}>
       <h3>Search Contacts</h3>
       <input
         className="form-control"
@@ -14,19 +20,25 @@ const ContactSearch = () => {
         hx-trigger="input changed delay:500ms, search"
         hx-target="#search-results"
         hx-indicator=".htmx-indicator"
+        style={{ marginBottom: "1rem", padding: "0.5rem" }}
       />
 
       <table className="table">
         <thead>
           <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
+            <th style={thStyle}>First Name</th>
+            <th style={thStyle}>Last Name</th>
+            <th style={thStyle}>Email</th>
+            <th style={thStyle}>Phone</th>
+            <th style={thStyle}>City</th>
+            <th style={thStyle}>State</th>
           </tr>
         </thead>
         <tbody id="search-results">
           <tr>
-            <td colSpan={3}>No results found</td>
+            <td colSpan={6} style={{ textAlign: "center", padding: "1rem" }}>
+              No results found
+            </td>
           </tr>
         </tbody>
       </table>

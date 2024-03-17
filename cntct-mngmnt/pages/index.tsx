@@ -3,15 +3,15 @@ import clientPromise from "../lib/mongodb";
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import { useState, useEffect } from "react";
 import { Contact as ContactData } from "../models/contact";
-import htmx from "htmx.org";
-import { useRouter } from "next/router";
 import Script from "next/script";
-
-// import styles from './page.module.css';
 import callApi from "../core/callApi";
 import { VStack } from "../core/VStack";
-import ContactSearch from "../components/searchContact";
-// import { connectToDatabase } from '@/app/mongodb';
+import ContactSearch from "../components/SearchContact";
+import Header from "../components/Header";
+import { HStack } from "../core/HStack";
+import JsonViewer from "../components/JsonViewer";
+import ContactAddForm from "../components/ContactAddForm";
+import TabBar from "../components/TabBar";
 
 type ConnectionStatus = {
   isConnected: boolean;
@@ -45,285 +45,48 @@ export const getServerSideProps: GetServerSideProps<
 export default function Home({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const emptyFormData: ContactData = {
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    address: {
-      street: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      country: "",
-    },
-    email: "",
-    dateOfBirth: "",
-    notes: "",
-    tags: [],
-    isFavorite: false,
-  };
   const [contacts, setContacts] = useState<Array<ContactData>>([]);
-  const [formData, setFormData] = useState<ContactData>(emptyFormData);
-  useEffect(() => {
-    fetchContacts();
-  }, []);
 
-  const fetchContacts = async () => {
-    callApi<undefined, { contacts: Array<ContactData> }>({
-      method: "get",
-      url: "/api/contact/contactCrud",
-      steps: {
-        onSuccess: (data) => {
-          setContacts(data.contacts);
-        },
-      },
-    });
-  };
+  const [selectedTab, setSelectedTab] = useState(0);
+  const tabs = ["Add Contact Page", "Search Contacts", "View Database Json"];
 
-  const handleFormSubmit = async (event: any) => {
-    event.preventDefault();
-    callApi({
-      method: "post",
-      url: "/api/contact/contactCrud",
-      steps: {
-        onRequest: () => {},
-        onSuccess: (data) => {
-          console.log("data", data);
-        },
-        onFail: (error) => {
-          console.log("error", error);
-        },
-      },
-      body: formData,
-    });
-
-    // Refetch contacts after adding a new one
-    fetchContacts();
-
-    // Clear the form
-    setFormData(emptyFormData);
-  };
   return (
     <main className={""}>
       <Script src="https://cdn.jsdelivr.net/npm/htmx.org/dist/htmx.min.js" />
+      <Header></Header>
+      <TabBar
+        tabs={tabs}
+        selectedTab={selectedTab}
+        setSelectedTab={setSelectedTab}
+      />
       <VStack spacing={2}>
-        <h1>Contact Management System</h1>
-
-        <form
-          // onSubmit={(event) => {
-          //   handleFormSubmit(event);
-          // }}
-          hx-post="/api/contactApi"
-          hx-trigger="submit"
-          hx-target="#contactList"
-          hx-swap="outerHTML"
-          hx-boost
-        >
-          <VStack spacing={0}>
-            <label>
-              First Name:
-              <input
-                required
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={(e) =>
-                  setFormData({ ...formData, [e.target.name]: e.target.value })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              Last Name:
-              <input
-                required
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={(e) =>
-                  setFormData({ ...formData, [e.target.name]: e.target.value })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              Phone Number:
-              <input
-                type="text"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, [e.target.name]: e.target.value })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              Street Address:
-              <input
-                type="text"
-                name="street"
-                value={formData.address.street}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    address: { ...formData.address, street: e.target.value },
-                  })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              City:
-              <input
-                type="text"
-                name="city"
-                value={formData.address.city}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    address: { ...formData.address, city: e.target.value },
-                  })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              State:
-              <input
-                type="text"
-                name="state"
-                value={formData.address.state}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    address: { ...formData.address, state: e.target.value },
-                  })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              Postal Code:
-              <input
-                type="text"
-                name="postalCode"
-                value={formData.address.postalCode}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    address: {
-                      ...formData.address,
-                      postalCode: e.target.value,
-                    },
-                  })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              Country:
-              <input
-                type="text"
-                name="country"
-                value={formData.address.country}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    address: { ...formData.address, country: e.target.value },
-                  })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              Email:
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, [e.target.name]: e.target.value })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              Date of Birth:
-              <input
-                type="date"
-                name="dateOfBirth"
-                value={formData.dateOfBirth}
-                onChange={(e) =>
-                  setFormData({ ...formData, [e.target.name]: e.target.value })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              Notes:
-              <textarea
-                name="notes"
-                value={formData.notes}
-                onChange={(e) =>
-                  setFormData({ ...formData, [e.target.name]: e.target.value })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              Tags (comma-separated):
-              <input
-                type="text"
-                name="tags"
-                value={formData.tags.join(",")}
-                onChange={(e) =>
-                  setFormData({ ...formData, tags: e.target.value.split(",") })
-                }
-              />
-            </label>
-            <br />
-
-            <label>
-              Is Favorite:
-              <input
-                type="checkbox"
-                name="isFavorite"
-                checked={formData.isFavorite}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    [e.target.name]: e.target.checked,
-                  })
-                }
-              />
-            </label>
-
-            <br />
-
-            <button type="submit">Add Contact</button>
-          </VStack>
-        </form>
-        <ContactSearch></ContactSearch>
-        {/* {contacts &&
-          contacts.map((contact, index) => (
-            <li key={index}>
-              <div>
-                {contact.firstName} - {contact.email} - {contact.phoneNumber}
-              </div>
-            </li>
-          ))} */}
+        <br />
+        <div>
+          {selectedTab === 0 && (
+            <div>
+              <ContactAddForm setContacts={setContacts}></ContactAddForm>
+            </div>
+          )}
+          {selectedTab === 1 && (
+            <div>
+              <ContactSearch></ContactSearch>
+            </div>
+          )}
+          {selectedTab === 2 && (
+            <div>
+              <VStack>
+                <h2>test</h2>
+                
+                  {contacts ? (
+                    <JsonViewer object={contacts}></JsonViewer>
+                  ) : (
+                    <div>No results</div>
+                  )}
+                
+              </VStack>
+            </div>
+          )}
+        </div>
       </VStack>
     </main>
   );
