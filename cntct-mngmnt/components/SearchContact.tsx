@@ -1,5 +1,4 @@
-import React from "react";
-import htmx from "htmx.org";
+import React, { useEffect } from "react";
 
 const ContactSearch = () => {
   const thStyle: React.CSSProperties = {
@@ -9,7 +8,13 @@ const ContactSearch = () => {
   };
 
   return (
-    <div style={{ marginBottom: "2rem", display: "inline-block", alignSelf:'center' }}>
+    <div
+      style={{
+        marginBottom: "2rem",
+        display: "inline-block",
+        alignSelf: "center",
+      }}
+    >
       <h3>Search Contacts</h3>
       <input
         className="form-control"

@@ -52,8 +52,7 @@ export default function Home({
 
   return (
     <main className={""}>
-      <Script src="https://cdn.jsdelivr.net/npm/htmx.org/dist/htmx.min.js" />
-      <Header></Header>
+      <Header />
       <TabBar
         tabs={tabs}
         selectedTab={selectedTab}
@@ -61,7 +60,7 @@ export default function Home({
       />
       <VStack spacing={2}>
         <br />
-        <div>
+        <div style={{ width: "100%" }}>
           {selectedTab === 0 && (
             <div>
               <ContactAddForm setContacts={setContacts}></ContactAddForm>
@@ -75,14 +74,13 @@ export default function Home({
           {selectedTab === 2 && (
             <div>
               <VStack>
-                <h2>test</h2>
-                
-                  {contacts ? (
-                    <JsonViewer object={contacts}></JsonViewer>
-                  ) : (
-                    <div>No results</div>
-                  )}
-                
+                <h2>View All Json: Contacts</h2>
+
+                {contacts ? (
+                  <JsonViewer object={contacts}></JsonViewer>
+                ) : (
+                  <div>No results</div>
+                )}
               </VStack>
             </div>
           )}

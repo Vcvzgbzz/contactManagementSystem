@@ -7,7 +7,14 @@ type Props = {
 const TabBar = ({ tabs, selectedTab, setSelectedTab }: Props) => {
   return (
     <div
-      style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        marginTop: "20px",
+        borderBottom: "1px solid black",
+        borderTop: "1px solid black",
+        paddingBottom: "3px",
+      }}
     >
       {tabs.map((tab, index) => (
         <div

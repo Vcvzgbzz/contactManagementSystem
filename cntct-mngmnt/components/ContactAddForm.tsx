@@ -67,7 +67,8 @@ const ContactAddForm = ({ setContacts }: Props) => {
       hx-target="#contactList"
       hx-swap="outerHTML"
       hx-boost
-      style={{ border: "1px solid black", padding: "10px" }}
+      style={{ padding: "10px", display: "flex" }}
+      onSubmit={handleFormSubmit}
     >
       <VStack spacing={0}>
         <label>
