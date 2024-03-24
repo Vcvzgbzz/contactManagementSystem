@@ -7,7 +7,7 @@ interface CallApiProps<RequestType, ResponseType> {
 
   url: string;
   body?: RequestType;
-  method?: "get" | "post";
+  method?: "get" | "post" | "delete";
 }
 
 export async function callApi<RequestType, ResponseType>({

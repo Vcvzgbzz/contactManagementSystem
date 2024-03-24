@@ -62,13 +62,11 @@ const ContactAddForm = ({ setContacts }: Props) => {
 
   return (
     <form
+      id="contactList"
       hx-post="/api/contact/contactCrud"
       hx-trigger="submit"
-      hx-target="#contactList"
-      hx-swap="outerHTML"
       hx-boost
       style={{ padding: "10px", display: "flex" }}
-      onSubmit={handleFormSubmit}
     >
       <VStack spacing={0}>
         <label>

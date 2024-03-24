@@ -1,6 +1,21 @@
 import connectMongoDB from "../../../lib/mongodb";
 import Contact from "../../../models/contact";
+import { callApi } from "../../../core/callApi";
 
+export const deleteContact = (contactId) => {
+  callApi({
+    method: "delete",
+    url: "/api/contactCrud",
+    steps: {
+      onRequest: () => {
+        console.log("test");
+      },
+      onSuccess: () => {
+        console.log("success");
+      },
+    },
+  });
+};
 export default async function handler(req, res) {
   if (req.method === "POST") {
     await connectMongoDB();
@@ -10,7 +25,7 @@ export default async function handler(req, res) {
     if (!search) {
       return res
         .status(200)
-        .send(`<tr><td colSpan="3">No results found</td></tr>`);
+        .send(`<tr><td colSpan="3">No Search Term Found</td></tr>`);
     }
 
     const contacts = await Contact.find({

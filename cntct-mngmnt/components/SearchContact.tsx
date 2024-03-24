@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import htmx from "htmx.org";
+import callApi from "../core/callApi";
 
 const ContactSearch = () => {
   const thStyle: React.CSSProperties = {
@@ -9,6 +11,8 @@ const ContactSearch = () => {
 
   return (
     <div
+      className="htmx"
+      // ref={"searchContact"}
       style={{
         marginBottom: "2rem",
         display: "inline-block",
@@ -17,6 +21,7 @@ const ContactSearch = () => {
     >
       <h3>Search Contacts</h3>
       <input
+        id="testid"
         className="form-control"
         type="search"
         name="search"

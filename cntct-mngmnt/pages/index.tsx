@@ -12,6 +12,7 @@ import { HStack } from "../core/HStack";
 import JsonViewer from "../components/JsonViewer";
 import ContactAddForm from "../components/ContactAddForm";
 import TabBar from "../components/TabBar";
+import { resetHtmxForHtmxClass } from "../core/resetHtmx";
 
 type ConnectionStatus = {
   isConnected: boolean;
@@ -49,6 +50,9 @@ export default function Home({
 
   const [selectedTab, setSelectedTab] = useState(0);
   const tabs = ["Add Contact Page", "Search Contacts", "View Database Json"];
+  useEffect(() => {
+    resetHtmxForHtmxClass();
+  }, [selectedTab]);
 
   return (
     <main className={""}>
@@ -60,7 +64,7 @@ export default function Home({
       />
       <VStack spacing={2}>
         <br />
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%" }} className="Content">
           {selectedTab === 0 && (
             <div>
               <ContactAddForm setContacts={setContacts}></ContactAddForm>
