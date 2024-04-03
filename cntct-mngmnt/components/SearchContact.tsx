@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import htmx from "htmx.org";
 import callApi from "../core/callApi";
+import { HStack } from "../core/HStack";
+import { resetHtmxForHtmxClass } from "../core/resetHtmx";
 
 const ContactSearch = () => {
   const thStyle: React.CSSProperties = {
@@ -8,7 +10,7 @@ const ContactSearch = () => {
     padding: "1rem",
     textAlign: "center",
   };
-
+  const [page, setPage] = React.useState("1");
   return (
     <div
       className="htmx"
@@ -22,17 +24,23 @@ const ContactSearch = () => {
       <h3>Search Contacts</h3>
       <input
         id="testid"
-        className="form-control"
+        className="searchForm"
         type="search"
         name="search"
         placeholder="Begin Typing To Search Users..."
-        hx-post="/api/contact/contactSearch"
+        hx-get={`/api/contact/contactSearch?page=${page}&size=1`}
         hx-trigger="input changed delay:500ms, search"
         hx-target="#search-results"
         hx-indicator=".htmx-indicator"
         style={{ marginBottom: "1rem", padding: "0.5rem" }}
       />
-
+      <input
+        id="pageSelector"
+        onChange={(e) => {
+          setPage(e.target.value);
+          resetHtmxForHtmxClass("searchForm");
+        }}
+      ></input>
       <table className="table">
         <thead>
           <tr>

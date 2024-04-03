@@ -1,9 +1,7 @@
-import Head from "next/head";
 import clientPromise from "../lib/mongodb";
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import { useState, useEffect } from "react";
 import { Contact as ContactData } from "../models/contact";
-import Script from "next/script";
 import callApi from "../core/callApi";
 import { VStack } from "../core/VStack";
 import ContactSearch from "../components/SearchContact";

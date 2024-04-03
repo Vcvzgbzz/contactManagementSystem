@@ -17,10 +17,10 @@ export const deleteContact = (contactId) => {
   });
 };
 export default async function handler(req, res) {
-  if (req.method === "POST") {
+  if (req.method === "GET") {
     await connectMongoDB();
-    const { body } = req;
-    const { search } = body;
+    const { query } = req;
+    const { page, search, size } = query;
 
     if (!search) {
       return res
@@ -38,8 +38,40 @@ export default async function handler(req, res) {
     });
 
     let html = "";
-    contacts.forEach((contact) => {
-      html += `<tr>
+    if (page) {
+      const adjustedPage = page - 1;
+      for (
+        let index = size * adjustedPage;
+        index < size * adjustedPage + size;
+        index++
+      ) {
+        const atEnd = index === size * adjustedPage + size - 1;
+        if (contacts[index] === undefined) {
+          break;
+        }
+        html += `<tr ${
+          atEnd
+            ? `hx-get="/api/contact/contactSearch?page=${
+                parseInt(page) + 1
+              }&search=${search}&size=${size}"
+        hx-trigger="revealed"
+        hx-swap="afterend"`
+            : ""
+        }>
+        <td>${contacts[index].firstName}</td>
+        <td>${contacts[index].lastName}</td>
+        <td>${contacts[index].email}</td>
+        <td>${contacts[index].phoneNumber}</td>
+        <td>${contacts[index].address.city}</td>
+        <td>
+        ${contacts[index].address.state}
+        </td>
+       
+      </tr>`;
+      }
+    } else {
+      contacts.forEach((contact) => {
+        html += `<tr>
         <td>${contact.firstName}</td>
         <td>${contact.lastName}</td>
         <td>${contact.email}</td>
@@ -47,8 +79,8 @@ export default async function handler(req, res) {
         <td>${contact.address.city}</td>
         <td>${contact.address.state}</td>
       </tr>`;
-    });
-
+      });
+    }
     if (contacts.length === 0) {
       html = `<tr><td colSpan="3">No results found</td></tr>`;
     }
