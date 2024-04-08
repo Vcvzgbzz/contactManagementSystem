@@ -10,11 +10,9 @@ const ContactSearch = () => {
     padding: "1rem",
     textAlign: "center",
   };
-  const [page, setPage] = React.useState("1");
   return (
     <div
       className="htmx"
-      // ref={"searchContact"}
       style={{
         marginBottom: "2rem",
         display: "inline-block",
@@ -28,19 +26,12 @@ const ContactSearch = () => {
         type="search"
         name="search"
         placeholder="Begin Typing To Search Users..."
-        hx-get={`/api/contact/contactSearch?page=${page}&size=1`}
+        hx-get={`/api/contact/contactSearch?page=1&size=1`}
         hx-trigger="input changed delay:500ms, search"
         hx-target="#search-results"
         hx-indicator=".htmx-indicator"
         style={{ marginBottom: "1rem", padding: "0.5rem" }}
       />
-      <input
-        id="pageSelector"
-        onChange={(e) => {
-          setPage(e.target.value);
-          resetHtmxForHtmxClass("searchForm");
-        }}
-      ></input>
       <table className="table">
         <thead>
           <tr>

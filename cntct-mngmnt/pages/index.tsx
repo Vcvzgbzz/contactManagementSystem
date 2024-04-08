@@ -47,7 +47,12 @@ export default function Home({
   const [contacts, setContacts] = useState<Array<ContactData>>([]);
 
   const [selectedTab, setSelectedTab] = useState(0);
-  const tabs = ["Add Contact Page", "Search Contacts", "View Database Json"];
+  const tabs = [
+    "Add Contact Page",
+    "Search Contacts",
+    "View Database Json",
+    "Generate Random Contact",
+  ];
   useEffect(() => {
     resetHtmxForHtmxClass();
   }, [selectedTab]);
@@ -85,6 +90,99 @@ export default function Home({
                 )}
               </VStack>
             </div>
+          )}
+          {selectedTab === 3 && (
+            <VStack>
+              <form
+                className="htmx"
+                id="contactList"
+                hx-post="/api/contact/contactCrud"
+                hx-trigger="submit"
+                hx-boost
+                style={{ padding: "10px", display: "flex" }}
+              >
+                <VStack spacing={0}>
+                  <label>
+                    First Name:
+                    <input type="text" name="firstName" value="John" />
+                  </label>
+                  <br />
+
+                  <label>
+                    Last Name:
+                    <input required type="text" name="lastName" value="Doe" />
+                  </label>
+                  <br />
+
+                  <label>
+                    Phone Number:
+                    <input type="text" name="phoneNumber" value={Date.now()} />
+                  </label>
+                  <br />
+
+                  <label>
+                    Street Address:
+                    <input type="text" name="street" value="random" />
+                  </label>
+                  <br />
+
+                  <label>
+                    City:
+                    <input type="text" name="city" value="random" />
+                  </label>
+                  <br />
+
+                  <label>
+                    State:
+                    <input type="text" name="state" value="random" />
+                  </label>
+                  <br />
+
+                  <label>
+                    Postal Code:
+                    <input type="text" name="postalCode" value="random" />
+                  </label>
+                  <br />
+
+                  <label>
+                    Country:
+                    <input type="text" name="country" value="random" />
+                  </label>
+                  <br />
+
+                  <label>
+                    Email:
+                    <input type="email" name="email" value="random@gmail.com" />
+                  </label>
+                  <br />
+
+                  <label>
+                    Date of Birth:
+                    <input type="date" name="dateOfBirth" value={Date.now()} />
+                  </label>
+                  <br />
+
+                  <label>
+                    Notes:
+                    <textarea name="notes">random</textarea>
+                  </label>
+                  <br />
+
+                  <label>
+                    Tags (comma-separated):
+                    <input type="text" name="tags" value="random" />
+                  </label>
+                  <br />
+
+                  <label>
+                    Is Favorite:
+                    <input type="checkbox" name="isFavorite" checked={false} />
+                  </label>
+                  <br />
+                </VStack>
+                <button type="submit">Add Contact</button>
+              </form>
+            </VStack>
           )}
         </div>
       </VStack>
