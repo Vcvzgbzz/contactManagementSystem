@@ -2,20 +2,7 @@ import connectMongoDB from "../../../lib/mongodb";
 import Contact from "../../../models/contact";
 import { callApi } from "../../../core/callApi";
 
-export const deleteContact = (contactId) => {
-  callApi({
-    method: "delete",
-    url: "/api/contactCrud",
-    steps: {
-      onRequest: () => {
-        console.log("test");
-      },
-      onSuccess: () => {
-        console.log("success");
-      },
-    },
-  });
-};
+
 export default async function handler(req, res) {
   if (req.method === "GET") {
     await connectMongoDB();
@@ -66,6 +53,7 @@ export default async function handler(req, res) {
         <td>
         ${contacts[index].address.state}
         </td>
+        <td><button hx-delete="/api/contact/contactCrud?id=${contacts[index].id}">Delete</button></td>
        
       </tr>`;
       }

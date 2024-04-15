@@ -11,6 +11,7 @@ import JsonViewer from "../components/JsonViewer";
 import ContactAddForm from "../components/ContactAddForm";
 import TabBar from "../components/TabBar";
 import { resetHtmxForHtmxClass } from "../core/resetHtmx";
+import { useRouter } from 'next/router'
 
 type ConnectionStatus = {
   isConnected: boolean;

@@ -43,7 +43,7 @@ const ContactSearch = () => {
             <th style={thStyle}>State</th>
           </tr>
         </thead>
-        <tbody id="search-results">
+        <tbody id="search-results"  hx-target="closest tr" hx-swap="outerHTML swap:1s">
           <tr>
             <td colSpan={6} style={{ textAlign: "center", padding: "1rem" }}>
               No results found
