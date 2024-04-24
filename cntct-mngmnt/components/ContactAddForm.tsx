@@ -40,25 +40,6 @@ const ContactAddForm = ({ setContacts }: Props) => {
     isFavorite: false,
   };
   const [formData, setFormData] = useState<ContactData>(emptyFormData);
-  const handleFormSubmit = async (event: any) => {
-    event.preventDefault();
-    callApi({
-      method: "post",
-      url: "/api/contact/contactCrud",
-      steps: {
-        onRequest: () => {},
-        onSuccess: (data) => {
-          console.log("data", data);
-        },
-        onFail: (error) => {
-          console.log("error", error);
-        },
-      },
-      body: formData,
-    });
-    fetchContacts();
-    setFormData(emptyFormData);
-  };
 
   return (
     <form

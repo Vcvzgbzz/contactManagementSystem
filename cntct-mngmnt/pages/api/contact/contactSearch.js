@@ -1,7 +1,7 @@
 import connectMongoDB from "../../../lib/mongodb";
 import Contact from "../../../models/contact";
 import { callApi } from "../../../core/callApi";
-
+import { formatJsonToTable } from "../../../core/formatter";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
@@ -45,15 +45,7 @@ export default async function handler(req, res) {
         hx-swap="afterend"`
             : ""
         }>
-        <td>${contacts[index].firstName}</td>
-        <td>${contacts[index].lastName}</td>
-        <td>${contacts[index].email}</td>
-        <td>${contacts[index].phoneNumber}</td>
-        <td>${contacts[index].address.city}</td>
-        <td>
-        ${contacts[index].address.state}
-        </td>
-        <td><button hx-delete="/api/contact/contactCrud?id=${contacts[index].id}">Delete</button></td>
+        ${formatJsonToTable(contacts[index])}
        
       </tr>`;
       }
